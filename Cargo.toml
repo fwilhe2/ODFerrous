@@ -1,0 +1,27 @@
+[package]
+name = "odferrous"
+version = "0.1.0"
+edition = "2021"
+authors = ["Florian Wilhelm"]
+description = "A standard-compliant ODF 1.4 library for Rust"
+
+[lib]
+
+[dependencies]
+# Performance and Safety
+quick-xml = { version = "0.40", features = ["serialize"] }
+zip = "8.6"
+thiserror = "2.0"
+anyhow = "1.0"
+
+serde = { version = "1.0", features = ["derive"] }
+
+# Documentation and API surface
+derive_builder = "0.20"
+
+[dev-dependencies]
+# The Sentry Agent Tools
+cargo-mutants = "27.0"
+proptest = "1.11"
+# For schema validation in tests
+tempfile = "3.27"

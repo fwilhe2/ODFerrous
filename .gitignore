@@ -1,0 +1,17 @@
+# Rust / Cargo
+/target/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Generated ODF samples and test artifacts
+/sample.odt
+/sample.fodt
+
+# Temporary files
+*.log
+*.tmp
