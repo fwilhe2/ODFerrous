@@ -1,8 +1,9 @@
+use std::fs::File;
 use odferrous::TextDocument;
 use std::path::Path;
 
 
-use std::io::{Read, Seek, SeekFrom, Write};
+use std::io::{stdout, BufWriter, Read, Seek, SeekFrom, Write};
 use std::sync::Arc;
 
 // --- Errors ---
@@ -74,6 +75,27 @@ impl OdfDocument {
         } else {
             Err(OdfError::UnknownFormat)
         }
+    }
+
+    /// Convenience function to write the document directly to a file path.
+    pub fn write_to_file(&self, path: impl AsRef<Path>, format: OdfFormat) -> Result<()> {
+        let file = File::create(path)?;
+
+        // Idiom: Wrap the file in a BufWriter. Writing to a ZIP or XML
+        // involves lots of small writes, which is incredibly slow without a buffer.
+        let writer = BufWriter::new(file);
+
+        self.write(writer, format)
+    }
+
+    /// Ultimate convenience helper for saving a standard zipped ODT file.
+    pub fn save_as_odt(&self, path: impl AsRef<Path>) -> Result<()> {
+        self.write_to_file(path, OdfFormat::Zipped)
+    }
+
+    /// Ultimate convenience helper for saving a flat XML file.
+    pub fn save_as_fodt(&self, path: impl AsRef<Path>) -> Result<()> {
+        self.write_to_file(path, OdfFormat::FlatXml)
     }
 
     /// Explicitly write the document in the desired format.
@@ -177,19 +199,17 @@ fn main() -> Result<()> {
         .build()?;
 
     // 2. Write as Flat XML for clean git diffs
-    let mut flat_file = std::fs::File::create("document.fodt")?;
-    doc.write(&mut flat_file, OdfFormat::FlatXml)?;
+    doc.save_as_fodt("document.fodt")?;
 
     // 3. Write as standard zipped ODF for LibreOffice/MS Word distribution
-    let mut zipped_file = std::fs::File::create("document.odt")?;
-    doc.write(&mut zipped_file, OdfFormat::Zipped)?;
+    doc.save_as_odt("document.sdf")?;
 
-    // 4. Create a new document using immutable api
+    // 4. Modify a document using immutable api
     let new_doc = doc.with_paragraph("hello world");
 
     // 5. Reading is seamless; the library sniffs the file type automatically
-    let opened_file = std::fs::File::open("document.fodt")?;
-    let _loaded_doc = OdfDocument::parse(std::io::BufReader::new(opened_file))?;
+    // let opened_file = std::fs::File::open("document.fodt")?;
+    // let _loaded_doc = OdfDocument::parse(std::io::BufReader::new(opened_file))?;
 
     Ok(())
 }
