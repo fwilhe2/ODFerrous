@@ -21,7 +21,7 @@ derive_builder = "0.20"
 
 [dev-dependencies]
 # The Sentry Agent Tools
-cargo-mutants = "27.0"
+cargo-mutants = "27.1"
 proptest = "1.11"
 # For schema validation in tests
 tempfile = "3.27"
