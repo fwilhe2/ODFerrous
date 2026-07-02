@@ -9,7 +9,7 @@ description = "A standard-compliant ODF 1.4 library for Rust"
 
 [dependencies]
 # Performance and Safety
-quick-xml = { version = "0.40", features = ["serialize"] }
+quick-xml = { version = "0.41", features = ["serialize"] }
 zip = "8.6"
 thiserror = "2.0"
 anyhow = "1.0"
